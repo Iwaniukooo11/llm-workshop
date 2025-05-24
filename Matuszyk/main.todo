@@ -1,0 +1,10 @@
+
+Basic Requirements:
+    - Find Model and Concept dataset: @done
+        - Identify model on Hugging Face Hub that predicts some concepts based on the input @done
+        - Prepare a dataset that model can use to predict concepts @done
+    - Set up an interpretation pipeline:
+        - Implement LLM-based interpretation using careful prompt engineering
+        - Design effective prompting strategies
+        - Create evaluation metrics to assess concept prediction accuracy and simulation performance
+
