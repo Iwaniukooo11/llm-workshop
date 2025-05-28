@@ -15,29 +15,25 @@ class HuggingFaceModel(BaseModel):
     def train(self, train_loader: DataLoader) -> None:
         pass
 
-class LLMClient:
-    """
-    Wrapper for a local HuggingFace causal LM.
-    Supports generate() via `transformers` pipeline.
-    """
-    def __init__(self, model_name: str, device: Union[int, str] = 'cpu', **kwargs):
-        if 'max_length' in kwargs:
-            kwargs['max_new_tokens'] = kwargs.pop('max_length')
+class LLM(BaseModel):
+    def __init__(self, model_name: str, device: Union[int, str] = 'cpu', **pipeline_kwargs):
+        if 'max_length' in pipeline_kwargs:
+            pipeline_kwargs['max_new_tokens'] = pipeline_kwargs.pop('max_length')
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
-        if device != 'cpu':
-            self.model.to(device)
+        self.model     = AutoModelForCausalLM.from_pretrained(model_name)
+        self.model.to('cpu')
         self.generator = pipeline(
             "text-generation",
             model=self.model,
             tokenizer=self.tokenizer,
-            device=0 if device!='cpu' else -1,
-            **kwargs
+            device=0 if device != 'cpu' else -1,
+            **pipeline_kwargs
         )
-    def generate(self, prompt: str, system_message: str = None) -> str:
-        full_prompt = (system_message + "\n\n" if system_message else "") + prompt
-        outputs = self.generator(full_prompt, num_return_sequences=1)
-        return outputs[0]["generated_text"][len(full_prompt):].strip()
+    def train(self, train_loader: DataLoader) -> None:
+        pass
+    def predict(self, input_text: str) -> str:
+        outputs = self.generator(input_text, num_return_sequences=1)
+        return outputs[0]["generated_text"][len(input_text):].strip()
 # ---------------------------------------------------------------
 
 
@@ -79,10 +75,10 @@ class LLMSizeExperiment:
             concept_keywords: List[str],
             classifier_name: str,
             classifier: BaseModel,
-            llm_clients: Dict[str, "LLMClient"],
-            prompt_llm_concept: PromptConfig,
-            prompt_llm_simulation: PromptConfig,
-            prompt_llm_direct: PromptConfig
+            llm_clients: Dict[str, "LLM"],
+            prompt_llm_concept: str,
+            prompt_llm_simulation: str,
+            prompt_llm_direct: str
     ) -> Tuple['pd.DataFrame', 'pd.DataFrame']:
         """
         Runs a battery of experiments to compare classifier behavior and LLM interpretability at scale.
@@ -107,10 +103,10 @@ class LLMSizeExperiment:
         concept_keywords : List[str] - Keywords to match in the LLM's concept-guess output.
         classifier_name : str - A short label for the classifier (e.g., 'distilbert-sst2').
         classifier : BaseModel - An instance implementing the BaseModel interface (train/predict).
-        llm_clients : Dict[str, LLMClient] - Mapping from LLM identifiers to LLMClient instances.
-        prompt_llm_concept : PromptConfig- Template and optional system message for concept-guess prompts.
-        prompt_llm_simulation : PromptConfig- Template and optional system message for simulation prompts.
-        prompt_llm_direct : PromptConfig - Template and optional system message for direct classification prompts.
+        llm_clients : Dict[str, LLM] - Mapping from LLM identifiers to LLM instances.
+        prompt_llm_concept : str- Template for concept-guess prompts.
+        prompt_llm_simulation : str- Template for simulation prompts.
+        prompt_llm_direct : str - Template for direct classification prompts.
 
         Returns
         -------
@@ -135,11 +131,7 @@ class LLMSizeExperiment:
             shot_txt = "\n".join(f"{i + 1}. \"{t}\" → {lab}" for i, (t, lab) in enumerate(context_for_llm))
 
             # --- Concept Guess ---
-            system_prompt_llm_concept = prompt_llm_concept.system
-            user_prompt_llm_concept = prompt_llm_concept.user_tmpl.format(shot=shot_txt)
-            llm_concept_prediction = client.generate(
-                user_prompt_llm_concept,
-                system_message=system_prompt_llm_concept).strip()
+            llm_concept_prediction = client.predict(input_text=prompt_llm_concept.format(xy_train=shot_txt)).strip()
             self.llm_predicted_concepts[name] = llm_concept_prediction
             self.llm_concept_accuracy[name] = float(concept.lower() in llm_concept_prediction.lower()
                                                     or any(kw.lower() in llm_concept_prediction.lower()
@@ -147,12 +139,8 @@ class LLMSizeExperiment:
 
             # --- Simulation ---
             llm_simulation_predicted_labels: List[str] = []
-            system_prompt_llm_simulation = prompt_llm_simulation.system
             for text in X_for_llm:
-                user_prompt_llm_simulation = prompt_llm_simulation.user_tmpl.format(shot=shot_txt, input=text)
-                llm_simulation_predicted_label = client.generate(
-                    user_prompt_llm_simulation,
-                    system_message=system_prompt_llm_simulation).split()[0].strip()
+                llm_simulation_predicted_label = client.predict(input_text=prompt_llm_simulation.format(xy_train=shot_txt, x_test=text)).split()[0].strip()
                 llm_simulation_predicted_labels.append(llm_simulation_predicted_label)
             self.llm_simulation_predicted_labels[name] = llm_simulation_predicted_labels
             self.llm_simulation_accuracy[name] = sum(simulation_label == classifier_label
@@ -161,12 +149,8 @@ class LLMSizeExperiment:
 
             # --- Direct Performance ---
             llm_direct_predicted_labels: List[str] = []
-            system_prompt_llm_direct = prompt_llm_direct.system
             for text in X_for_llm:
-                user_prompt_llm_direct = prompt_llm_direct.system.format(input=text)
-                llm_direct_predicted_label = client.generate(
-                    user_prompt_llm_direct,
-                    system_message=system_prompt_llm_direct).split()[0].strip()
+                llm_direct_predicted_label = client.predict(input_text=prompt_llm_direct.format(x_test=text)).split()[0].strip()
                 llm_direct_predicted_labels.append(llm_direct_predicted_label)
             self.llm_direct_predicted_labels[name] = llm_direct_predicted_labels
             self.llm_direct_accuracy[name] = sum(l == t
@@ -179,11 +163,16 @@ class LLMSizeExperiment:
                     metrics_rows.append({
                         'dataset_name': dataset_name,
                         'classifier': clf,
+                        'shots': shots,
                         'llm': llm,
                         'classifier_accuracy': self.classifier_accuracy[clf],
                         'llm_concept_accuracy': self.llm_concept_accuracy.get(llm, 0.0),
                         'llm_simulation_accuracy': self.llm_simulation_accuracy.get(llm, 0.0),
-                        'llm_direct_accuracy': self.llm_direct_accuracy.get(llm, 0.0)
+                        'llm_direct_accuracy': self.llm_direct_accuracy.get(llm, 0.0),
+                        'prompt_llm_concept': prompt_llm_concept,
+                        'prompt_llm_simulation': prompt_llm_simulation,
+                        'prompt_llm_direct': prompt_llm_direct,
+                        'llm_predicted_concept': self.llm_predicted_concepts.get(clf, 0.0),
                     })
             metrics_df = pd.DataFrame(metrics_rows)
 
@@ -191,7 +180,7 @@ class LLMSizeExperiment:
             preds_rows = []
             for clf in self.classifier_predicted_labels:
                 for llm in self.llm_predicted_concepts:
-                    concept_guess = self.llm_predicted_concepts[llm]
+                    # concept_guess = self.llm_predicted_concepts[llm]
                     sim_list = self.llm_simulation_predicted_labels[llm]
                     dir_list = self.llm_direct_predicted_labels[llm]
                     for idx, text in enumerate(X):
@@ -202,7 +191,6 @@ class LLMSizeExperiment:
                             'X': text,
                             'y': y[idx],
                             'classifier_predicted_label': self.classifier_predicted_labels[clf][idx],
-                            'llm_predicted_concept': concept_guess if idx == 0 else None,
                             'llm_simulation_predicted_label': (sim_list[idx - shots] if idx >= shots else None),
                             'llm_direct_predicted_label': (dir_list[idx - shots] if idx >= shots else None)
                         }
@@ -250,22 +238,13 @@ if __name__ == "__main__":
         classifier=HuggingFaceModel("distilbert-base-uncased-finetuned-sst-2-english"),
 
         llm_clients={
-            "gpt2-124M": LLMClient("gpt2", max_length=5, temperature=1.0),
-            "gpt2-345M": LLMClient("gpt2-medium", max_length=5, temperature=1.0),
-            "gpt2-774M": LLMClient("gpt2-large", max_length=5, temperature=1.0)
+            "gpt2-124M": LLM("gpt2", max_length=5, temperature=1.0),
+            "gpt2-345M": LLM("gpt2-medium", max_length=5, temperature=1.0),
+            "gpt2-774M": LLM("gpt2-large", max_length=5, temperature=1.0)
         },
-        prompt_llm_concept=PromptConfig(
-            system   = "In 2 words guess, what task is the model doing:",
-            user_tmpl= "{shot}\n\nBased on these examples, what task is the model performing?"
-        ),
-        prompt_llm_simulation=PromptConfig(
-            system   = "You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE.",
-            user_tmpl= "{shot}\n\nLabel this: \"{input}\""
-        ),
-        prompt_llm_direct=PromptConfig(
-            system   = "You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE.",
-            user_tmpl= "\"{input}\":"
-        )
+        prompt_llm_concept="In 2 words guess, what task is the model doing: {xy_train}\n\nBased on these examples, what task is the model performing?",
+        prompt_llm_simulation="You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE. {xy_train}\n\nLabel this: \"{x_test}\"",
+        prompt_llm_direct="You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE.\"{x_test}\":"
     )
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
