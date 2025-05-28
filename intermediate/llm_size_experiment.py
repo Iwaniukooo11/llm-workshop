@@ -1,6 +1,5 @@
 # Sebastian's Component: Intermediate experiments
 from core.base_model import BaseModel
-from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union, Optional
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from torch.utils.data import DataLoader
@@ -36,14 +35,6 @@ class LLM(BaseModel):
         return outputs[0]["generated_text"][len(input_text):].strip()
 # ---------------------------------------------------------------
 
-
-# Experiments ----------------------
-
-@dataclass
-class PromptConfig:
-    system:   Optional[str]  = None
-    user_tmpl: str           = ""
-
 class LLMSizeExperiment:
 
     def __init__(self):
@@ -61,8 +52,8 @@ class LLMSizeExperiment:
         self.llm_simulation_accuracy: Dict[str, float] = {}
 
         # LLM direct classification outputs and metrics
-        self.llm_direct_predicted_labels: Dict[str, List[str]] = {}
-        self.llm_direct_accuracy: Dict[str, float] = {}
+        # self.llm_direct_predicted_labels: Dict[str, List[str]] = {}
+        # self.llm_direct_accuracy: Dict[str, float] = {}
 
     def run(
             self,
@@ -78,7 +69,7 @@ class LLMSizeExperiment:
             llm_clients: Dict[str, "LLM"],
             prompt_llm_concept: str,
             prompt_llm_simulation: str,
-            prompt_llm_direct: str
+            # prompt_llm_direct: str
     ) -> Tuple['pd.DataFrame', 'pd.DataFrame']:
         """
         Runs a battery of experiments to compare classifier behavior and LLM interpretability at scale.
@@ -124,7 +115,7 @@ class LLMSizeExperiment:
         # 2) for each LLM, do concept‐guess / simulation prediction / direct prediction
         context_for_llm = list(zip(X[:shots], y[:shots]))
         X_for_llm = X[shots:]
-        y_for_llm = y[shots:]
+        # y_for_llm = y[shots:]
         for name, client in llm_clients.items():
             print('Running experiment for LLM:', name)
 
@@ -139,6 +130,7 @@ class LLMSizeExperiment:
 
             # --- Simulation ---
             llm_simulation_predicted_labels: List[str] = []
+            # client.train(X[:shots], y[:shots])
             for text in X_for_llm:
                 llm_simulation_predicted_label = client.predict(input_text=prompt_llm_simulation.format(xy_train=shot_txt, x_test=text)).split()[0].strip()
                 llm_simulation_predicted_labels.append(llm_simulation_predicted_label)
@@ -148,13 +140,13 @@ class LLMSizeExperiment:
                                                      classifier_predicted_labels[shots:])) / len(llm_simulation_predicted_labels)
 
             # --- Direct Performance ---
-            llm_direct_predicted_labels: List[str] = []
-            for text in X_for_llm:
-                llm_direct_predicted_label = client.predict(input_text=prompt_llm_direct.format(x_test=text)).split()[0].strip()
-                llm_direct_predicted_labels.append(llm_direct_predicted_label)
-            self.llm_direct_predicted_labels[name] = llm_direct_predicted_labels
-            self.llm_direct_accuracy[name] = sum(l == t
-                                                 for l, t in zip(llm_direct_predicted_labels, y_for_llm)) / len(llm_direct_predicted_labels)
+            # llm_direct_predicted_labels: List[str] = []
+            # for text in X_for_llm:
+            #     llm_direct_predicted_label = client.predict(input_text=prompt_llm_direct.format(x_test=text)).split()[0].strip()
+            #     llm_direct_predicted_labels.append(llm_direct_predicted_label)
+            # self.llm_direct_predicted_labels[name] = llm_direct_predicted_labels
+            # self.llm_direct_accuracy[name] = sum(l == t
+            #                                      for l, t in zip(llm_direct_predicted_labels, y_for_llm)) / len(llm_direct_predicted_labels)
 
             # 4) build metrics DataFrame
             metrics_rows = []
@@ -168,10 +160,10 @@ class LLMSizeExperiment:
                         'classifier_accuracy': self.classifier_accuracy[clf],
                         'llm_concept_accuracy': self.llm_concept_accuracy.get(llm, 0.0),
                         'llm_simulation_accuracy': self.llm_simulation_accuracy.get(llm, 0.0),
-                        'llm_direct_accuracy': self.llm_direct_accuracy.get(llm, 0.0),
+                        # 'llm_direct_accuracy': self.llm_direct_accuracy.get(llm, 0.0),
                         'prompt_llm_concept': prompt_llm_concept,
                         'prompt_llm_simulation': prompt_llm_simulation,
-                        'prompt_llm_direct': prompt_llm_direct,
+                        # 'prompt_llm_direct': prompt_llm_direct,
                         'llm_predicted_concept': self.llm_predicted_concepts.get(clf, 0.0),
                     })
             metrics_df = pd.DataFrame(metrics_rows)
@@ -182,7 +174,7 @@ class LLMSizeExperiment:
                 for llm in self.llm_predicted_concepts:
                     # concept_guess = self.llm_predicted_concepts[llm]
                     sim_list = self.llm_simulation_predicted_labels[llm]
-                    dir_list = self.llm_direct_predicted_labels[llm]
+                    # dir_list = self.llm_direct_predicted_labels[llm]
                     for idx, text in enumerate(X):
                         row = {
                             'dataset_name': dataset_name,
@@ -192,7 +184,7 @@ class LLMSizeExperiment:
                             'y': y[idx],
                             'classifier_predicted_label': self.classifier_predicted_labels[clf][idx],
                             'llm_simulation_predicted_label': (sim_list[idx - shots] if idx >= shots else None),
-                            'llm_direct_predicted_label': (dir_list[idx - shots] if idx >= shots else None)
+                            # 'llm_direct_predicted_label': (dir_list[idx - shots] if idx >= shots else None)
                         }
                         preds_rows.append(row)
             predictions_df = pd.DataFrame(preds_rows)
@@ -244,11 +236,12 @@ if __name__ == "__main__":
         },
         prompt_llm_concept="In 2 words guess, what task is the model doing: {xy_train}\n\nBased on these examples, what task is the model performing?",
         prompt_llm_simulation="You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE. {xy_train}\n\nLabel this: \"{x_test}\"",
-        prompt_llm_direct="You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE.\"{x_test}\":"
+        # prompt_llm_direct="You are a classifier. Reply with exactly one word: POSITIVE or NEGATIVE.\"{x_test}\":"
     )
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
     print(metrics_df)
     print(precictions_df)
 
+    # TODO change data loading into train test split
 
