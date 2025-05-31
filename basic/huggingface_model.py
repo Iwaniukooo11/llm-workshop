@@ -33,10 +33,19 @@ class HuggingFaceModel:
 
         self.model_loaded = True
 
-    def predict(self, input_text: str) -> str:
+    # Added by Sebislaw
+    def predict(self, input_text: str) -> dict[str, float]:
         if not self.model_loaded:
             self.load_model()
 
         results = self.pipeline(input_text)
+        best_entry = max(results[0], key=lambda x: x["score"])
+        return {best_entry["label"]: best_entry["score"]}
 
-        return max(results[0], key=lambda x: x["score"])["label"]
+    # def predict(self, input_text: str) -> str:
+    #     if not self.model_loaded:
+    #         self.load_model()
+    #
+    #     results = self.pipeline(input_text)
+    #
+    #     return max(results[0], key=lambda x: x["score"])["label"]
