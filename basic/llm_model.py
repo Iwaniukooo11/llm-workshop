@@ -11,7 +11,7 @@ import torch
 
 
 class LLMModel(BaseModel):
-    def __init__(self, model_name="EleutherAI/gpt-j-6B"):
+    def __init__(self, model_name="EleutherAI/gpt-j-6B", verbose=False):
         super().__init__()
         self.model_name = model_name
         self.tokenizer = None
@@ -30,6 +30,7 @@ class LLMModel(BaseModel):
         self.prompt_tail_llm_train = "Learn based on this."
 
         self.prompt_llm_simulation = "{x_test}"
+        self.verbose = verbose
         self._load_model()
 
     def _load_model(self):
@@ -92,10 +93,12 @@ class LLMModel(BaseModel):
         for x, y in zip(x_test, y_test):
             prompt += self.prompt_content_llm_concept.format(x_test=x, y_test=y)
         prompt += self.prompt_tail_llm_concept
-        print(f"Concept prediction prompt:\n{prompt}\n")
+        if self.verbose:
+            print(f"Concept prediction prompt:\n{prompt}\n")
         concept = self._simple_prediction(prompt)
         self.concept_description = concept
-        print(f"Predicted concept: {concept}")
+        if self.verbose:
+            print(f"Predicted concept: {concept}")
         return concept
 
     def predict(self, x_test):
@@ -116,7 +119,8 @@ class LLMModel(BaseModel):
         prompt += self.prompt_tail_llm_train + "\n\n"
         prompt += f"Now predict the output for: {x_test}\n"
         prompt += "Output:"
-        print(f"Prediction prompt for '{x_test}':\n{prompt}\n")
+        if self.verbose:
+            print(f"Prediction prompt for '{x_test}':\n{prompt}\n")
         prediction = self._simple_prediction(prompt)
         predictions.append(prediction)
-        return predictions
+        return predictions[0]
