@@ -60,8 +60,7 @@ class LLMSizeExperiment:
             y_test: List[str],
             x_val: List[str],
             y_val: List[str],
-            x_train_llm: List[str],
-            y_train_llm: List[str],
+            max_samples_for_llm_train: int,
             dataset_name: str,
             concept: str,
             concept_keywords: List[str],
@@ -153,7 +152,7 @@ class LLMSizeExperiment:
             llm_model.prompt_header_llm_concept = prompt_header_llm_concept
             llm_model.prompt_content_llm_concept = prompt_content_llm_concept
             llm_model.prompt_tail_llm_concept = prompt_tail_llm_concept
-            llm_concept_prediction = llm_model.predict_concept(x_train[:max_samples_for_concept], y_train[:max_samples_for_concept])
+            llm_concept_prediction = llm_model.predict_concept(x_train[:max_samples_for_concept], classifier_predicted_labels[:max_samples_for_concept])
             self.llm_predicted_concepts[name] = llm_concept_prediction
             self.llm_concept_accuracy[name] = float(concept.lower() in llm_concept_prediction.lower()
                                                     or any(kw.lower() in llm_concept_prediction.lower()
@@ -167,7 +166,7 @@ class LLMSizeExperiment:
             llm_model.prompt_header_llm_train = prompt_header_llm_train
             llm_model.prompt_header_llm_train = prompt_content_llm_train
             llm_model.prompt_header_llm_train = prompt_tail_llm_train
-            llm_model.train(x_train_llm, y_train_llm)
+            llm_model.train(x_train[:max_samples_for_llm_train], classifier_predicted_labels[:max_samples_for_llm_train])
 
             # --- Simulation ---
             llm_simulation_predicted_labels: List[str] = []
