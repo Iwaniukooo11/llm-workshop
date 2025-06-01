@@ -60,9 +60,12 @@ class LLMSizeExperiment:
             y_test: List[str],
             x_val: List[str],
             y_val: List[str],
+            x_train_llm: List[str],
+            y_train_llm: List[str],
             dataset_name: str,
             concept: str,
             concept_keywords: List[str],
+            max_samples_for_concept: int,
 
             classifier_name: str,
             classifier: BaseModel,
@@ -143,11 +146,14 @@ class LLMSizeExperiment:
             print('Running experiment for LLM:', name)
 
             # --- Concept Guess ---
-            prompt_content = ""
-            for x, y in zip(x_test, y_test):
-                prompt_content += prompt_content_llm_concept.format(x_test=x, y_test=y)
-            prompt = prompt_header_llm_concept + prompt_content + prompt_tail_llm_concept
-            llm_concept_prediction = llm_model.predict_concept(prompt)
+            # prompt_content = ""
+            # for x, y in zip(x_test, y_test):
+            #     prompt_content += prompt_content_llm_concept.format(x_test=x_train, y_test=y_train)
+            # prompt = prompt_header_llm_concept + prompt_content + prompt_tail_llm_concept
+            llm_model.prompt_header_llm_concept = prompt_header_llm_concept
+            llm_model.prompt_content_llm_concept = prompt_content_llm_concept
+            llm_model.prompt_tail_llm_concept = prompt_tail_llm_concept
+            llm_concept_prediction = llm_model.predict_concept(x_train[:max_samples_for_concept], y_train[:max_samples_for_concept])
             self.llm_predicted_concepts[name] = llm_concept_prediction
             self.llm_concept_accuracy[name] = float(concept.lower() in llm_concept_prediction.lower()
                                                     or any(kw.lower() in llm_concept_prediction.lower()
@@ -155,16 +161,21 @@ class LLMSizeExperiment:
 
             # --- Training ---
             # prompt_content = ""
-            # for x, y in zip(x_train, y_train):
+            # for x, y in zip(x_train_llm, y_train_llm):
             #     prompt_content += prompt_content_llm_train.format(x_train=x, y_train=y)
             # prompt = prompt_header_llm_train + prompt_content + prompt_tail_llm_train
-            # llm_model.train(train_loader=None, x_train=x_train, y_train=y_train, prompt=prompt)
+            llm_model.prompt_header_llm_train = prompt_header_llm_train
+            llm_model.prompt_header_llm_train = prompt_content_llm_train
+            llm_model.prompt_header_llm_train = prompt_tail_llm_train
+            llm_model.train(x_train_llm, y_train_llm)
 
             # --- Simulation ---
             llm_simulation_predicted_labels: List[str] = []
+            llm_model.prompt_llm_simulation = prompt_llm_simulation
             for x in x_test:
-                prompt = prompt_llm_simulation.format(x_test=x)
-                llm_simulation_predicted_label = llm_model.predict(prompt)
+                # prompt = prompt_llm_simulation.format(x_test=x)
+                # llm_simulation_predicted_label = llm_model.predict(prompt)
+                llm_simulation_predicted_label = llm_model.predict(x)
                 llm_simulation_predicted_labels.append(llm_simulation_predicted_label)
             self.llm_simulation_predicted_labels[name] = llm_simulation_predicted_labels
             self.llm_simulation_accuracy[name] = sum(simulation_label == classifier_label
