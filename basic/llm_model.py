@@ -1,4 +1,6 @@
 # LLM model implementation
+from torch.utils.data import DataLoader
+
 from core.base_model import BaseModel
 from transformers import (
     AutoModelForCausalLM,
@@ -10,12 +12,13 @@ import torch
 
 class LLMModel(BaseModel):
     def __init__(
-        self, model_name: str = "microsoft/Phi-3-mini-4k-instruct", emotion_list=None
+        self, model_name: str = "microsoft/Phi-3-mini-4k-instruct", emotion_list=None, use_gpu=True
     ):
         self.model_name = model_name
         self.model_loaded = False
         self.model = None
         self.tokenizer = None
+        self.use_gpu = use_gpu
         if emotion_list is None:
             self.emotion_list = [  # jak ta lista jest za długa, LLM ma problemy
                 "joy",
@@ -43,20 +46,29 @@ class LLMModel(BaseModel):
         self.model_loaded = True
 
     def _load_llm_model(self):
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type="nf4",
-        )
+        if self.use_gpu:
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4",
+            )
 
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.float16,
-            device_map="auto",
-            quantization_config=quantization_config,
-        )
+            tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+            model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                torch_dtype=torch.float16,
+                device_map="auto",
+                quantization_config=quantization_config,
+            )
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+            model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                torch_dtype=torch.float32,
+                device_map=None
+            )
+            model.to(torch.device("cpu"))
 
         return tokenizer, model
 
@@ -70,6 +82,8 @@ class LLMModel(BaseModel):
         return self._get_llm_emotion_prediction(input_text, self.emotion_list)
 
     def _get_llm_emotion_prediction(self, text: str, emotion_list: list) -> str:
+        if not self.model_loaded:
+            self.load_model()
         emotions_str = ", ".join(emotion_list)
         prompt = f"What emotion from this list: [{emotions_str}] best describes this text: '{text}' Answer with just the emotion name:"
 
@@ -108,3 +122,6 @@ class LLMModel(BaseModel):
             self.load_model()
 
         return self._get_llm_emotion_prediction(input_text, emotion_list)
+
+    def train(self, train_loader: DataLoader) -> None:
+        pass
