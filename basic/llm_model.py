@@ -95,7 +95,7 @@ class LLMModel(BaseModel):
         prompt += self.prompt_tail_llm_concept
         if self.verbose:
             print(f"Concept prediction prompt:\n{prompt}\n")
-        concept = self._simple_prediction(prompt)
+        concept = self._simple_prediction(prompt, max_length=5, temperature=0.5)
         self.concept_description = concept
         if self.verbose:
             print(f"Predicted concept: {concept}")
@@ -116,11 +116,10 @@ class LLMModel(BaseModel):
                 x_train=x_train, y_train=y_train
             )
 
-        prompt += self.prompt_tail_llm_train + "\n\n"
-        prompt += f"Now predict the output for: {x_test}\n"
-        prompt += "Output:"
+        prompt += self.prompt_tail_llm_train
+        prompt += self.prompt_llm_simulation.format(x_test=x_test)
         if self.verbose:
             print(f"Prediction prompt for '{x_test}':\n{prompt}\n")
-        prediction = self._simple_prediction(prompt)
-        predictions.append(prediction)
+        prediction = self._simple_prediction(prompt, max_length=3, temperature=0.7)
+        predictions.append(prediction.lower())
         return predictions[0]
