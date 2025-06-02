@@ -34,6 +34,7 @@ class LLMSizeExperiment:
         # LLM simulation outputs and metrics
         self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
         self.simulation_correct: Dict[str, List[bool]] = {}
+        self.direct_correct: Dict[str, List[bool]] = {}
 
     def run(
             self,
@@ -83,6 +84,7 @@ class LLMSizeExperiment:
         # LLM simulation outputs and metrics
         self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
         self.simulation_correct: Dict[str, List[bool]] = {}
+        self.direct_correct: Dict[str, List[bool]] = {}
 
         # 1) classifier prediction
         if train_classifier:
@@ -149,6 +151,9 @@ class LLMSizeExperiment:
             self.simulation_correct[name] = [classifier_label.lower() in sim_label.lower()
                                              for sim_label, classifier_label in zip(
                     llm_simulation_predicted_labels, classifier_predicted_labels)]
+            self.direct_correct[name] = [y_test_label.lower() in sim_label.lower()
+                                             for sim_label, y_test_label in zip(
+                    llm_simulation_predicted_labels, y_test)]
             print('Simulation done.\n')
 
         # 4) build model DataFrame
@@ -187,12 +192,14 @@ class LLMSizeExperiment:
                  llm_simulation_predicted_label,
                  x_test_present_in_prompt,
                  classifier_predicted_label_confidence,
-                 simulation_correct                     ) in zip(x_test, y_test,
+                 simulation_correct,
+                 direct_correct                         ) in zip(x_test, y_test,
                                                         self.classifier_predicted_labels[classifier_name],
                                                         self.llm_simulation_predicted_labels[llm_name],
                                                         [True] * max_samples_for_llm_train + [False] * (len(self.llm_simulation_predicted_labels[llm_name]) - max_samples_for_llm_train),
                                                         self.classifier_confidence[classifier_name],
-                                                        self.simulation_correct[llm_name]):
+                                                        self.simulation_correct[llm_name],
+                                                        self.direct_correct[llm_name]):
                 rows.append({
                     'run_id': self.run_number,
                     'dataset_name': dataset_name,
@@ -204,6 +211,7 @@ class LLMSizeExperiment:
                     'classifier_predicted_label_confidence': classifier_predicted_label_confidence,
                     'x_test_present_in_prompt': x_test_present_in_prompt,
                     'llm_simulation_label_correct': simulation_correct,
+                    'llm_direct_label_correct': direct_correct,
                     'llm_simulation_predicted_label': llm_simulation_predicted_label
                 })
         prediction_statistics = pd.DataFrame(rows)
