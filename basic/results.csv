@@ -1,0 +1,439 @@
+,prompt,output,real_output,prediction_true
+0,My favourite food is anything I didn't have to cook myself.,"Output:The author is likely feeling """,love,0
+1,"Now if he does off himself, everyone will think hes having a laugh screwing with people instead of actually dead",".
+
+Output:The author is most likely",neutral,0
+2,WHY THE FUCK IS BAYLESS ISOING,ALL THE MEN IN THE WORLD?,anger,0
+3,To make her feel threatened,", he constantly belittled her achievements and",neutral,0
+4,Dirty Southern Wankers,"Document:
+
+The documentary """,anger,0
+5,OmG pEyToN iSn'T gOoD eNoUgH tO hElP uS iN tHe PlAyOfFs! Dumbass Broncos fans circa December 2015.,**Solution:**The author is,neutral,0
+6,Yes I heard abt the f bombs! That has to be why. Thanks for your reply:) until then hubby and I will anxiously wait 😝,Output:The author is feeling excitement.,gratitude,-1
+7,We need more boards and to create a bit more space for [NAME]. Then we’ll be good.,The author' explanation of the need for,desire,0
+8,Damn youtube and outrage drama is super lucrative for reddit,".
+
+Output: The author is likely feeling",admiration,0
+9,It might be linked to the trust factor of your friend.,**Solution:**The emotion,neutral,0
+10,Demographics? I don’t know anybody under 35 who has cable tv.,Output:The author is most likely feeling,confusion,0
+11,"Aww... she'll probably come around eventually, I'm sure she was just jealous of [NAME]... I mean, what woman wouldn't be! lol ","Output:
+
+The author is most",amusement,0
+12,Hello everyone. Im from Toronto as well. Can call and visit in personal if needed.,Output:The author' explanation seems to,neutral,0
+13,R/sleeptrain Might be time for some sleep training. Take a look and try to feel out what's right for your family.,**Answer:**The author' explanation,caring,0
+14,"[NAME] - same fucking problem, slightly better command of the English language.",### Solution:The author is,annoyance,0
+15,"Shit, I guess I accidentally bought a Pay-Per-View boxing match",instead of the documentary I wanted.,embarrassment,0
+16,Thank you friend,for your kind words. I'm truly touched,gratitude,0
+17,Fucking coward.,"Output: Disgust
+
+Input",anger,-1
+18,that is what retardation looks like,".
+
+Output:disgust",neutral,-1
+19,Maybe that’s what happened to the great white at Houston zoo,. The shark was found dead in its tank,confusion,0
+20,"I never thought it was at the same moment, but sometimes after [NAME] sacrifice... sounds logical",", but I'm not sure.",confusion,0
+21,i got a bump and a bald spot. i feel dumb <3,Output:The author is likely feeling embar,annoyance,0
+22,You are going to do the dishes now,".
+
+
+### Solution:The em",neutral,0
+23,Slowing things down now,", I'm starting to see the beauty in",neutral,0
+24,His name has already been released. Just can't post it here.,"Output:The author is likely feeling """,neutral,0
+25,Stupidly stubborn / stubbornly stupid,/ stupidly stubborn / stubbornly stupid,anger,0
+26,Mine was apparently [NAME] and the giant peach!,### Answer:The author is,neutral,0
+27,I miss them being alive,".
+
+Output:The emotion that best",sadness,0
+28,"Super, thanks",for the update. I'm glad to hear,gratitude,0
+29,"Troll, bro. They know they're saying stupid shit. The motherfucker does nothing but stink up libertarian subs talking shit",".
+
+Output:The author is feeling a",anger,0
+30,"All sounds possible except the key, I can't see how it was missed in the first search. ",The author's feelings can be best,confusion,0
+31,"Ok, then what the actual fuck is your plan?",Output:The author is most likely feeling,anger,0
+32,What does FPTP have to do with the referendum?,Input: What does FPTP have,curiosity,0
+33,Happy to be able to help.,**Answer:**The author is most,joy,0
+34,Famous for his 3-4 Defense,", he's a defensive powerhouse.",admiration,0
+35,Pretty sure I’ve seen this. He swings away with the harness he is wearing. Still looks painful but I think he lives,"for this.
+
+Output:The author is",sadness,0
+36,"aw, thanks! I appreciate that! ","Output:
+
+Gratitude",gratitude,1
+37,Thanks! I love watching him every week,"end.
+
+Output:The emotion that",gratitude,0
+38,I read on a different post that he died shortly after of internal injuries.,Output:The author is likely feeling sad,sadness,0
+39,Honestly it sounds exhausting being married to him. Maybe it will be better for you in the long run.,Output:The author is likely feeling a,disappointment,0
+40,It's crazy how far Photoshop has come. Underwater bridges?!! NEVER!!!,Output:The author is most likely feeling,excitement,0
+41,"I wouldn't let a sweet potato dictate decisions, ever.",**Solution:**The author',disapproval,0
+42,It's true though. He either gets no shirt and freezes to death or wears a stupid looking butchers cape. I hope he gets something better next season,".
+
+Output:The author is most likely",optimism,0
+43,"It's a better option because it's my life and none of your business? Lmfao, who are you","to judge?
+
+
+### Solution:",approval,0
+44,"Cheers, sololander!",I'm glad you're enjoying the,joy,1
+45,Very interesting. Thx,"for the info.
+
+Output:The author",gratitude,0
+46,This isn't really wholesome,", but I've been thinking about the way",disapproval,0
+47,Lord help me I want to be a mod again. So many damn trolls here,".
+
+Output:The author is most likely",desire,0
+48,"Thanks DB, I'll see if I can find the book",".
+
+Output:
+
+Gratitude",gratitude,1
+49,LOL. Super cute!,Output:The emotion that best explains,admiration,0
+50,I just shit my pants. Then walk away. Embarrassing enough he won't press or follow you.,Output:The emotion that best explains,embarrassment,0
+51,This...has 9k upvotes. Wow.,Output:The author is likely feeling a,excitement,0
+52,Awesome. Thanks!,**Solution:**The author is,gratitude,0
+53,"And then they say, “HAHAHAHHA IT WAS RIGHT THERE WOW!”",Output:The emotion that best describes,amusement,0
+54,Twilight... STILL a better love story than The Last Jedi!,**Answer:** The author is most,admiration,0
+55,Good for #70 to console the poor guy,".
+
+Output:The author is likely feeling",caring,0
+56,The republicans are the military. You are an idiot.,Output:The author is most likely feeling,annoyance,0
+57,"Awesome! I’m a cradle [RELIGION], so really interesting to hear your experience. Thanks for sharing.",Output:admiration,gratitude,-1
+58,What a wonderful world,! I can't believe how beautiful everything is,admiration,0
+59,"just noticed, lol. damn pervert foreigners.",Output:The author is most likely feeling,amusement,0
+60,Oh forgive us for trying to make an exciting atmosphere at our homecourt.,"We failed miserably.
+
+Output:The",excitement,0
+61,"true I am a troll, but fortunately for me I'm not emotionally invested in it.",### Solution:The author',approval,0
+62,sorry [NAME]! 😘😘😘,I'm really sorry for what happened. I,remorse,0
+63,"At least it’s not anything worse, and that you are still close to that person :)",Output:The author is likely feeling a,approval,0
+64,my brain hurts...,I've been trying to solve this puzzle,sadness,0
+65,Thank you for at least doing something good sir.,Output:The emotion that best explains,gratitude,0
+66,"He was off by 5 minutes, not impressed. ",Output:disappointment,disappointment,1
+67,"Pay you for what, just standing there? Done.","Output:The author is likely feeling """,approval,0
+68,"Apologies, I take it all back as I’ve just seen his latest effort",. It’ieves me no end to see his,remorse,0
+69,I love Rocket Love and Blasted. I just wonder who the songs were written for because these are all reference tracks except Acura Intergul,"let.
+
+Output:The author is likely",love,0
+70,okay im interested in joining the bare hands hunting posse,but i dont know if i can handle the physical,approval,0
+71,I think the 90 day rule applies to increases over 5%?,Output:The author is likely feeling confusion,confusion,1
+72,So this means the people who have debt can see those that don’t. Am I sensing an easier target for muggings and such?,Output:The author is likely feeling fear,curiosity,-1
+73,Skynet has really lost its edge,. I'm not sure if it's,disappointment,0
+74,You just make her sound awesome.,Output:admiration,admiration,1
+75,seriously wtf. I want to see how the whole hand went in detail. that was the sickest soulread ever,".
+
+Output:The author is most likely",anger,0
+76,Your team lacks ethics.,**Solution:**The emotion,annoyance,0
+77,i wouldn't take that significant of a pay cut. you should keep your job and do your creative writing on the side/free time.,Output:The author is likely feeling 'dis,caring,0
+78,Who is this Wild team? Where have they been?,Output:The author is likely feeling curiosity,curiosity,1
+79,omg [NAME] and his dad walking out together is so cute 😍,Output: The emotion that best explains,admiration,0
+80,Why’s he pointless? I want to know how people like you watch this game. Genuinely baffles me.,Output:The single emotion that best,curiosity,0
+81,I appreciate his deadpan humour.,Output:The author is feeling admiration,admiration,1
+82,It's because you play against 1000 ms ping EU players that have no idea what's going on. Happy hunting!,Output:The author is most likely feeling,joy,0
+83,The fuck is “mog?!”,I can’t believe I just said that.,anger,0
+84,Especially that “Australia ain’t gonna cop it” ad on TV god I hate [NAME],"for saying that.
+
+Output:The author",anger,0
+85,We thought he was getting better but then he turned himself around.,Output:The author is likely feeling disappoint,disappointment,0
+86,You seem slightly sensitive... I was actually thinking we had been infiltrated by the normies,".
+
+Output:The author is likely feeling",caring,0
+87,"Three words, no subtlety. ""Dude. Stop. Seriously."" ",**Solution:**The author is,annoyance,0
+88,"[NAME] dude I see [NAME] so rarely that I forget that he's the OG ""Fuck this character fuck this stupid game"" king. ",**Solution:**The author is,annoyance,0
+89,"Wow. I just read the synopsis, and that’s really what happens. ","Output:
+
+The author is most",surprise,0
+90,"Wow, that landlady sure is a piece of shit. I'd be interested in knowing how many people she has discriminated against or harassed in the past.","Output:disgust
+
+Input",curiosity,-1
+91,I KILL YOU SCUM,"!
+
+Output:The author is most likely",anger,0
+92,"It’s way too broken, anyone and their dog can use it.","Output: Disgust
+
+Input",sadness,-1
+93,youre a disgusting piece of filth.,### Solution:The author is,disgust,0
+94,By the way the dogs also alerted at kuss road but will just ignore that much like [NAME] did lol ciao,Output:The author is likely feeling am,amusement,0
+95,"Just an employee, just stressed that it takes so long to save 10k for example and even that is nothing ! Should of brought more bitcoins",".
+
+Output:The author is most likely",disappointment,0
+96,I don't think aspergers causes me distress or anxiety. I think having to live in a society that privileges neurotypical modes of interaction causes me distress and anxiety,".
+
+Output:The author is likely feeling",nervousness,0
+97,2019 should just be a picture of a trash can or dumpster on fire. Amazing how shitty DICE can make things in 10 years.,"Output:disgust
+
+Input",annoyance,-1
+98,Yeah let's wrap up AS4 I'm suddenly so much more excited for S11,".
+
+Output:excitement",excitement,1
+99,"Absolutely. I'd love it. No matter how much I like the guy, if he just goes for it that's not cool.",Output:The author is most likely feeling,love,0
+100,"Honestly, same. I was miserable at my admin asst job.",I'm so glad to be done with it,sadness,0
+101,Glad to see Hearts fans giving [NAME] such a warm welcome back..,Output:The author is most likely feeling,joy,0
+102,"Glad you feel better! My offer still stands though, if you need someone, I’m here",".
+
+Output:The emotion that best",joy,0
+103,Colts Offense is laughable right now,".
+
+The single emotion that best explains",amusement,0
+104,"Lol so petty, I kinda love it. I probably wouldn’t actually do that but it’s tempting.",Output:The author is feeling a mix,amusement,0
+105,Lmao Stole my joke! 😂,Output:The author is most likely feeling,amusement,0
+106,Is this a [NAME] reference. I feel like it is.,"### Solution:
+
+The",curiosity,0
+107,Don't think we should be stomping all over people's bodily autonomy just so public health authorities can declare victory.,Output:The author is most likely feeling,disapproval,0
+108,Can he teach them to run really really fast?,"Output:The author is likely feeling """,curiosity,0
+109,[NAME] was one of the only good things in that season,".
+
+
+### Solution:The author",admiration,0
+110,Your coaching is terrible.... be ready and see how [NAME] uses [NAME],"to improve your game.
+
+
+###",fear,0
+111,I adore this comment section <3,**Solution:**The author is,love,0
+112,How did you try it if it's not live yet? There was no early access to it,".
+
+Output:The author is likely feeling",curiosity,0
+113,"Stop master debating, you are making a fool out of yourself. It's concerning.",Output:The author is likely feeling a,annoyance,0
+114,"as long as the tracking shows delivered, it's not your responsibility what happens to it after that",".
+
+**Solution:**The author",caring,0
+115,"My stylist is a fit, handsome guy with big, sexy hands. Can't say I don't like it when he tousles my hair.","Output:The author is likely feeling """,admiration,0
+116,You are giving them human emotions. If you spent any time with cattle at all you would realize how silly that is.,Output:The author is likely feeling ',realization,0
+117,"He may have, I was more worried about the ""running and shooting the AR one handed, off to the side"".","Output:The author is likely feeling """,nervousness,0
+118,"Hmmm, can I see that statistic claiming Rowan engineering is that high?",**Solution:**The author',curiosity,0
+119,horse meat is fucking peng i love it. why is it ok for a cow to be slaughtered for food but not a horse? ridiculous double standards,".
+
+Output: The author is feeling a",love,0
+120,Where’s Sharpton now?,I’m not sure if he’s still,curiosity,0
+121,good luck buddy,", you're going to need it.",caring,0
+122,I don’t understand why people give gold to crossposts. You deserve all the upvotes.,Output:The author is most likely feeling,confusion,0
+123,"No problem at all, glad I could help :) Cheers!",The author'ieves a feeling of relief,joy,-1
+124,My [NAME]! This isnt a vaccine! It's a jello shot!,Output:The single emotion that best,surprise,0
+125,"Oh wow. Yeah I’m very new, only about 8 hours gameplay",. I’m not sure if I’ve,surprise,0
+126,Food stamps are a disgrace. People should get money!,Output:The author is most likely feeling,disappointment,0
+127,By [NAME]! That’s [NAME] music!,I can’t believe I’m saying this,excitement,0
+128,That pole and cheap plastic fence surely would offer excellent protection from a car. Walk it off brah.,Output:The author is most likely feeling,approval,0
+129,It creates perverse incentives. Allow underpaid prison labour and suddenly you've an incentive towards exploiting your prison population rather than rehabilitating them.,Output:The author is most likely feeling,annoyance,0
+130,"Yeahhhh no, you're banned for this whole convo.","### Solution:
+
+The",disapproval,0
+131,"I'm 14 stone...so probably about 2 stone over weight. I don't drink alcohol or do drugs, but I love food.... ",Answer: The author is likely feeling a,love,0
+132,"I thought I couldn't get more depressed about last game, but.....",Output:The author is most likely feeling,disappointment,0
+133,i think its cool because its a hybrid that comes in stickshift,"and automatic.
+
+Output: The author is",approval,0
+134,"I'm not saying your analysis is wrong or not based on evidence, just that the data it generates is not useful. ",**Solution:**The author is,disapproval,0
+135,"It's simple, he's blunt, and that is what some people need.",**Solution:**The author',approval,0
+136,"I like this sub, and I like you. You're alright. ",Output: The single emotion that best,love,0
+137,"Yeah, I was thinking my boy was into them before that. But I doubt Panic! At the Disco would have peaked his interest.",Output: The author's statement suggests,confusion,0
+138,wow so almost every sub has grown a lot in 7 months. Also 8.3k!! what!? that's insane,"!
+
+Output:The author is most likely",surprise,0
+139,I've never been there before so I can't confirm or deny but I would be really surprised if a casino only had limit holdem,".
+
+The author's feeling can be",surprise,0
+140,Go pursue that education. Let [NAME] wallow in her own sadness.,### Solution:The author is,sadness,0
+141,That's the kind of problem a physical therapist is more qualified to handle. Good luck,"with your recovery.
+
+**Solution:",optimism,0
+142,I was suffering a delirium flu during the phantom facemask game so it’s all sorts of suffering for me.,Output:The author is most likely feeling,sadness,0
+143,I had no idea what the fuck this was about. Found the ad and watched it. It's actually decent.,Output:The author' interviewee is,confusion,0
+144,"I'm sorry OP, every single thing on that list is incredibly wrong. I hope you're doing well now. ","Output:
+
+The author' explanation",remorse,0
+145,"I mean, your account is a day old, so I think you’ll be okay.",Output:The emotion that best describes,caring,0
+146,She has at least 12 elbows and all of them are happy. You get it gurl,".
+
+Output:The author is most likely",joy,0
+147,"Not surprised, damn that sucks. Concussions are awful.",Output:The author is most likely feeling,disgust,0
+148,"Yes, it's normal. More like considering you options than desperation",".
+
+**Solution:**The author",approval,0
+149,I wanted to see him show out over Kemba.,I wanted to see him show out over Kemb,desire,0
+150,They look absolutely PERFECT together. I hope its that way in real life too. So happy for ya [NAME]!!!,Output:The emotion that best describes,joy,0
+151,"It could be, but I hope it's abandoned. I haven't been too impressed with the flash forwards. ",Output:disappointment,disapproval,-1
+152,"Mmm, no. I highly dislike this. 10/10 TIHI material.",Output:The author is most likely feeling,disapproval,0
+153,All the scumbags around everywhere. Sucks that it's so easy to use for a lot of other things.,Output:The author is most likely feeling,annoyance,0
+154,Gamers know all too well how it feels to be oppressed by society.,### Solution:The author is,approval,0
+155,"Lol, get em Corsi! ",Output: The author is likely feeling am,amusement,0
+156,"No he was given a bad team to work with unfortunately, and never got the final shot he deserved :(",The author's feeling can be best,sadness,0
+157,Does nobody notice that this is a doctored photo..?? Like really bad clone stamp.. I mean it could be beautiful but this is not a real photo.,Output:The author is most likely feeling,disapproval,0
+158,I'm sorry but as someone who travels alone I would be pissed if I was told I can't drink at the bar by myself.,Output:The author is most likely feeling,remorse,0
+159,"Lol, that’s funny. I’ll have to find our Aggieopoly and see how it compares.",Output: The author is feeling amusement,amusement,1
+160,[NAME] better be careful. He'll be next.,### Solution:The author is,caring,0
+161,"To be a buzzkill, something can be both depressing and uplifting and despite being depressing it is most definitely uplifting. ",Output: The author is likely feeling a mix,disappointment,0
+162,my mom caught be masturbating to dominatrix porn (i was bored of vanilla shit) LOL But porn addiction is bad because it can stop you from approaching women etc,".
+
+Output:The author is likely feeling",amusement,0
+163,I really like this photo.,"It'ieves me.
+
+The single em",love,0
+164,Yes he is a hard worker for sure. Just wish he could get his shot back on track.,Output:The author is likely feeling a,desire,0
+165,"I’m sorry, you just sound like one of those people who takes overwatch super seriously and has no life",".
+
+Output:The emotion that best",remorse,0
+166,"ick! That makes me feel gross. I have ""Addison's Disease"". ","Output: disgust
+
+Input",disgust,1
+167,"Here did you know that [NAME] slept with 35,000 women. Outrageous.",### Solution:The author is,surprise,0
+168,"I live in Suiderstrand, which is past Aghulas, no option for fibre here unfortunately :(",The author's feeling can be best,disappointment,0
+169,"its oxford, if you dont agree with oxford go live in a damn cave, because they is correct, and [NAME] I LOVE ENGLAND",".
+
+Output:The author is expressing",love,0
+170,Idk for fun?,"Input:
+
+Output:",confusion,0
+171," I'm scared to even ask my mom ,I might get yelled at 😟",Output:The emotion that best explains,fear,0
+172,"I love it! A smile from a stranger has really turned my day around, so I always hope I can possibly do the same! ",Output: The emotion that best explains,love,0
+173,"I'm in Australia, so idk if there's really anything I can do.",Output:The author is likely feeling a,confusion,0
+174,"Ah, victory ",The single emotion that best explains what,joy,0
+175,I have his signature on my jersey. Lined up at Canadian Tire for it when I was younger. Happy retirement!,Output:The author is likely feeling a,joy,0
+176,I hope for the camera-man's sake that gun is empty,".
+
+Output:The author is most likely",optimism,0
+177,"Source each of these and trend lines from previous years please. No, listing a few agencies and telling people to Google 8t isn't a source. ","Input:
+
+Source:",disapproval,0
+178,"I hope she lives to be 200, just to piss them off.",Output:The author is most likely feeling,optimism,0
+179,I am more than pleasantly surprised I clicked this link,".
+
+Output:The single emotion that",surprise,0
+180,I’ve seen 62 to 8 in 12 hours up north. Weather is crazy stuff.,**Answer:** The author is most,excitement,0
+181,"They aren't horrible in the least bit. Just learn from your mistake, remember, and move on. That's all you can do.",The author is most likely feeling 'dis,caring,0
+182,I read fuck and not tuck. Was wondering how the hell it wasn't creepy....,Output:The author is most likely feeling,surprise,0
+183,Seeing that knife on this subreddit put the fear of [NAME] in me,".
+
+Output: Fear",fear,1
+184,Sorry he was a United director when he bought it.,Output:The author is most likely feeling,remorse,0
+185,you might be more of an optimist than me. hopefully you're right,".
+
+Output:The author is likely feeling",optimism,0
+186,Thats insane. Someone died like 2 years ago after a bolt got kicked up by a truck and went through his windshield and hit him on 146 in LaPorte,".
+
+Output:The author is most likely",sadness,0
+187,"[NAME] has to lose it a some point, just hope it's not tonight.",### Solution:The author is,optimism,0
+188,"I feel awful posting it, but I couldn’t not share :|",Output: The author is feeling a mix,disgust,0
+189,"“Wow. Just .. wow. Read a book, sweatie!”",Output: The author is most likely feeling,surprise,0
+190,"I am afraid to look, but my morbid curiosity draws me to ask.",Output:The emotion that best explains,fear,0
+191,This was potentially the most dangerous stunt I have ever seen someone do. One minor mistake and you die.,I can't believe they actually did it.,fear,0
+192,"whats the [NAME] story ? sorry, not up to date on the bloke","'s latest exploits.
+
+
+##",remorse,0
+193,wow! thats... a lot of water my dude was your bladder ok,"i get it now
+
+Output: The author",surprise,0
+194,We didn't win in Alvalade even when they got 7th place. We just have some sort of block there,".
+
+Output:The author is most likely",disappointment,0
+195,I'm so excited for this game!! 😄,"🎮
+
+Output:exc",excitement,0
+196,Focus on yourself by focusing on your prayers and reminding [NAME],of the importance of their own spiritual journey.,caring,0
+197,It's embarrassing!,I can't believe I forgot my own birth,embarrassment,0
+198,"I wasn't meaning it as an insult or anything, sorry if it came off that way. ","Output:
+
+The author is most",remorse,0
+199,[NAME] looked terrible that game. I was really hoping to be wrong but he came just as advertised by Hawks fans,".
+
+Output:disappointment",fear,-1
+200,Eat too many whoppers and he'll be down with the sickness. Lma0 I'm sorry,", but I can't assist with that.",remorse,0
+201,The impact of his head hitting the court looked so bad. I hope he'll recover from this.,Output:The author is most likely feeling,optimism,0
+202,"Same here man, terrible feeling",".
+
+Output:The emotion that best",fear,0
+203,Only married once so can't be that bad. Not that it even matters,".
+
+Output:The author is likely feeling",disapproval,0
+204,I get all the deja smells and it's terrible.,Output:The author is most likely feeling,disgust,0
+205,Really wish we had got something like this!,"The author's statement ""Really",desire,0
+206,I want to go back in time and hug you as a child (after you got the lice treated tho).,Output:The emotion that best explains,desire,0
+207,The only time this movie should encourage blindfolds is when watching it. Then hopefully you won’t witness the giant plot holes and terrible ending.,Output:The author is feeling disappointment,optimism,-1
+208,In shock and was more concerned about my kid tbh. Now off course I wish I'd sued the arse off her for emotional distress.,Output:The author is feeling a mix,desire,0
+209,same but with panic at the disco,".
+
+Input: same but with panic",fear,0
+210,"don't know any [NAME], sorry","for the inconvenience.
+
+
+##",remorse,0
+211,Stuff like this makes me worry a little less about the future generations.,Output:The author is likely feeling a,nervousness,0
+212,Mate you're talking to a Remainer who wants to Remain... I just want a Labour Government that's all.,Output:The author is most likely feeling,desire,0
+213,I would of taken a shit in the woods real quick,if I had to do it all over again.,disgust,0
+214,Happy Cake Day! :),**Answer:**The author is most,excitement,0
+215,We can only hope that they will appreciate our sacrifices once they get older!,Output:The emotion that best explains,optimism,0
+216,"I became a member in the summer and have still not gotten my packet, your post just gave me hope it still might come",".
+
+Output:The author is likely feeling",optimism,0
+217,Kinda reminds me of the 11 foot 8 videos. Sooo,"o, I'm not sure if I'",realization,0
+218,Company car? Oh boy he’s in trouble now.,"Answer: Disapproval
+
+Input",fear,-1
+219,Oh right I forgot [NAME] was on the show,. I can't believe I missed it.,realization,0
+220,I desperately want to believe you but then,I see the lack of effort you put into your,desire,0
+221,A year ago I said that this continuous ISO by Houston is disgusting to watch. It s still disgusting.,"Output:disgust
+
+Input:",disgust,1
+222,money always talk. i want more to learn from this lesson.,Output:The author is likely feeling a,desire,0
+223,My brother fell asleep on the beach once and his whole back turned purple from sunburn and yours is still worse than his! My [NAME]!!,Output:The author is most likely feeling,disgust,0
+224,"I forgot context and thought you meant the band was republican, please don’t worry me like this again ",**Solution:**The author is,nervousness,0
+225,also anxious that people will be angry or surprised or upset at me for me never telling people about this before,".
+
+Output:The author is most likely",nervousness,0
+226,It's holiday time here in Europe. Today is my first day in work for 2 weeks.,I'm feeling a bit nervous about the,excitement,0
+227,This is almost worse than Santa Con. Can we get millenials to destroy this please.,Output:The author is most likely feeling,disgust,0
+228,Also the fishing has been terrible for a month now. I am about to take the 5 story jump my friends.,Output:The author is most likely feeling,fear,0
+229,"People do realize that getting an ad declined for the Super Bowl is an actual advertising strategy, right?",**Answer:**The author is most,realization,0
+230,"Yeah strong man makes me nervous, imagine if he dropped it on his foot? 😬",Output:The author is feeling nervous,nervousness,0
+231,"wow it’s literally disgusting that you’re getting downvoted for pointing out that she abuses her kids. this is the society we live in, eugh",".
+
+Output: The author is feeling a",disgust,0
+232,I see it this way also. I have never played Pokemon Go but I feel like DD creates the same excitement.,Output:The author is expressing excitement,excitement,1
+233,I'm starting to think that this whole DSJ trade thing is a bunch of BS.,"The author's statement ""I'",realization,0
+234,I know one time I mixed stuff up and posted the slashes instead of the asterisks to italicize. Oops.,Output:The author is most likely feeling,embarrassment,0
+235,I feel like environmentalism has lost steam over the past ten to twenty years as the call to action has gotten too large in scope and abstract.,Output:The author is likely feeling disappoint,realization,0
+236,Took me a few time watching it to realize that was a man and not a child.,Output:The author is most likely feeling,realization,0
+237,This is pretty worrying and makes me wonder why she can’t. That’s not normal.,Output:The author is most likely feeling,nervousness,0
+238,"It’s embarrassing to share a license with them, that’s for sure.",Output:embarrassment,embarrassment,1
+239,So proud our sub is leaking into facebook,".
+
+The author is most likely feeling '",pride,0
+240,The problem with writing vague laws in 2012 and then implementing then in 2017 is that things are huge changes that have taken place in that time.,The author is most likely feeling 'dis,realization,0
+241,"Yes, once I even deleted my account because I was so nervous about down votes. Lately,every once in a while I comment encouraging good attitude.",Output:The author is most likely feeling,nervousness,0
+242,I find sativa makes me paranoid/anxious as hell. Indica calms me down more. Smoking too much of any strain makes me anxious by time though,".
+
+Output:The author is feeling anx",nervousness,0
+243,"I lost about 30 before anyone said anything. I think people probably noticed before then, though. ","Output:
+
+The author's",realization,0
+244,I was worried about that too honestly,", but I'm relieved to see that",nervousness,0
+245,"You fruitcart, you oughta be ashamed of knowing that, let alone expecting anyone else to know.",Output:The author is most likely feeling,embarrassment,0
+246,Shame..,"Output: Disgust.
+
+Input:",embarrassment,-1
+247,I feel like I've seen a comment like this on another post,"before.
+
+Output:The emotion that",realization,0
+248,Ugh foot rubs. I feel embarrassed thinking about how my nmom used to make me do this to her. Ugh ugh ugh,".
+
+Output:The author is feeling embar",embarrassment,0
+249,How embarrassing.,I can't believe I forgot my own birth,embarrassment,0
+250,"Fool me once, shame on you...","fool me twice, shame on me.",embarrassment,0
+251,I'm so proud to be british,"and proud of my heritage.
+
+Output",pride,0
+252,"I personally am very proud to be a vegetable. Corn, to be exact. Corn pride y'all",".
+
+Output:The author is most likely",pride,0
+253,I am twice as proud of my baby [NAME].,### Solution:The emotion,pride,0
+254,House Freedom Caucus strikes again. Thank god we took back the House and don’t have to deal with them paralyzing government again.,Output:The author is most likely feeling,relief,0
+255,"Innovation means ""I pridefully made this"" in China.",**Solution:**The author is,pride,0
+256,The intent is to provide the players with a sense of pride and accomplishment...,**Solution ative**: The,pride,0
+257,"Meh, I still rock my Burns jersey with pride. ","Output: pride
+
+Input: I",pride,1
+258,I am the proud owner of a Vernon Gholston jersey. My wife got it for me as a Christmas Gift our first year dating....,I'm feeling a mix of emot,pride,0
+259,Everyone hates these posts but when we do post them it’s because we too are also proud of the work we do. Congrats!,Output:The author is feeling pride.,pride,1
+260,I'm proud that this is the first response I see.,Output:The emotion that best explains,pride,0
+261,"Well sure his one appearance in relief lost us a game, but at least he didn’t get hurt. ",**Answer:** The author's,relief,0
+262,At least your stepdad didn't just take the pillow look at you and leave...,**Answer:**The author is likely,relief,0
+263,At least this makes me feel better about not being photogenic. It’s the cameras fault!,Output:The author is likely feeling a,relief,0
