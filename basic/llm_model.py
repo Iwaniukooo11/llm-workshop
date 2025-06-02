@@ -1,22 +1,33 @@
-# LLM model implementation
-from torch.utils.data import DataLoader
-
 from core.base_model import BaseModel
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    BitsAndBytesConfig,
-)
-import torch
-
+from huggingface_hub import InferenceClient
+import os
+from typing import List, Any, Optional
 
 class LLMModel(BaseModel):
-    def __init__(self, model_name="EleutherAI/gpt-j-6B"):
+    # Dictionary of supported models that are available on Hugging Face Inference API
+    SUPPORTED_MODELS = {
+        "llama-3-70b": "meta-llama/Llama-3.3-70B-Instruct",
+        "llama-3-8b": "meta-llama/Llama-3.3-70B-Instruct",
+        "mixtral-8x7b": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "gemma-7b": "google/gemma-7b-it"
+    }
+    
+    def __init__(self, model_key="llama-3-8b", api_key='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'):
         super().__init__()
-        self.model_name = model_name
-        self.tokenizer = None
-        self.model = None
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        # Use model key to get the actual model ID
+        if model_key in self.SUPPORTED_MODELS:
+            self.model_name = self.SUPPORTED_MODELS[model_key]
+        else:
+            self.model_name = model_key  # Allow custom model names
+            
+        # Set up API key, using environment variable as fallback
+        self.api_key = api_key or os.getenv("HF_API_KEY")
+        if not self.api_key:
+            raise ValueError("Hugging Face API token not found. Set HF_API_KEY env variable or pass api_key.")
+        
+        self.client = None
+        self.device = "api"  # Using API instead of local device
 
         self.training_data = []
         self.concept_description = ""
@@ -30,57 +41,52 @@ class LLMModel(BaseModel):
         self.prompt_tail_llm_train = "Learn based on this."
 
         self.prompt_llm_simulation = "{x_test}"
-        self._load_model()
-
-    def _load_model(self):
+        self._setup_client()
+    
+    def _setup_client(self):
+        """Initialize the Hugging Face Inference Client"""
         try:
-            print(f"Loading model: {self.model_name}")
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-            if self.tokenizer.pad_token is None:
-                self.tokenizer.pad_token = self.tokenizer.eos_token
-
-            if self.device == "cuda":
-                quantization_config = BitsAndBytesConfig(
-                    load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16
-                )
-                self.model = AutoModelForCausalLM.from_pretrained(
-                    self.model_name,
-                    quantization_config=quantization_config,
-                    device_map="auto",
-                )
-            else:
-                self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
-                self.model.to(self.device)
-
-            print(f"Model loaded successfully on {self.device}")
-
+            print(f"Setting up Hugging Face client for model: {self.model_name}")
+            self.client = InferenceClient(
+                provider="hf-inference",
+                api_key=self.api_key
+            )
+            print(f"Client initialized successfully")
         except Exception as e:
-            print(f"Error loading model: {e}")
+            print(f"Error setting up client: {e}")
+            raise
 
     def _simple_prediction(self, prompt, max_length=100, temperature=0.7):
+        """Generate text using Hugging Face Inference API"""
         try:
-            inputs = self.tokenizer.encode(prompt, return_tensors="pt").to(self.device)
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    inputs,
-                    max_length=inputs.shape[1] + max_length,
-                    temperature=temperature,
-                    do_sample=True,
-                    pad_token_id=self.tokenizer.pad_token_id,
-                    eos_token_id=self.tokenizer.eos_token_id,
-                    no_repeat_ngram_size=2,
-                )
-
-            response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+            # Using the chat completions interface following the AgentHandler pattern
+            completion = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_length,
+                temperature=temperature
+            )
+            
+            # Extract the response text
+            if hasattr(completion.choices[0], "message"):
+                response = completion.choices[0].message.content
+            else:
+                response = str(completion.choices[0])
+            
+            # Remove the prompt if it appears at the beginning
             if prompt in response:
                 response = response.replace(prompt, "").strip()
+                
             return response if response else "No response generated"
-
+            
         except Exception as e:
             print(f"Error in prediction: {e}")
-            return
+            return f"Error generating prediction: {str(e)}"
 
     def train(self, x_train, y_train):
+        """Store training examples and predict the concept"""
         self.training_data = []
         for x, y in zip(x_train, y_train):
             self.training_data.append((x, y))
@@ -88,6 +94,7 @@ class LLMModel(BaseModel):
         print(f"Training completed with {len(self.training_data)} examples")
 
     def predict_concept(self, x_test, y_test):
+        """Predict the underlying concept from examples"""
         prompt = self.prompt_header_llm_concept
         for x, y in zip(x_test, y_test):
             prompt += self.prompt_content_llm_concept.format(x_test=x, y_test=y)
@@ -99,6 +106,7 @@ class LLMModel(BaseModel):
         return concept
 
     def predict(self, x_test):
+        """Make predictions using stored training examples"""
         if not self.training_data:
             raise ValueError(
                 "Model must be trained first. Call train() with training data."
@@ -115,7 +123,7 @@ class LLMModel(BaseModel):
 
         prompt += self.prompt_tail_llm_train + "\n\n"
         prompt += f"Now predict the output for: {x_test}\n"
-        prompt += "Output:"
+        prompt += "Output (just plain answer):"
         print(f"Prediction prompt for '{x_test}':\n{prompt}\n")
         prediction = self._simple_prediction(prompt)
         predictions.append(prediction)
