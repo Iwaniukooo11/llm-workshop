@@ -1,9 +1,9 @@
 from pandas import DataFrame
-from sympy import false
 
 from core.base_model import BaseModel
 from typing import Dict, List
 from collections import Counter, defaultdict
+from basic.llm_model import LLMModel
 import random
 import pandas as pd
 from sklearn.metrics import (
@@ -37,8 +37,6 @@ class LLMSizeExperiment:
         # LLM simulation outputs and metrics
         self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
         self.llm_simulation_raw_predictions: Dict[str, List[str]] = {}
-        # self.simulation_correct: Dict[str, List[bool]] = {}
-        # self.direct_correct: Dict[str, List[bool]] = {}
 
     def run(
             self,
@@ -61,7 +59,8 @@ class LLMSizeExperiment:
             train_classifier: bool,
             classifier_train_arguments: Dict[str, int],
 
-            llm_models: Dict[str, BaseModel],
+            # llm_models: Dict[str, BaseModel],
+            llm_model_names: List[str],
             prompt_header_llm_concept: str,
             prompt_content_llm_concept: str,
             prompt_tail_llm_concept: str,
@@ -89,8 +88,6 @@ class LLMSizeExperiment:
         # LLM simulation outputs and metrics
         self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
         self.llm_simulation_raw_predictions: Dict[str, List[str]] = {}
-        # self.simulation_correct: Dict[str, List[bool]] = {}
-        # self.direct_correct: Dict[str, List[bool]] = {}
 
         # 1) classifier prediction
         if train_classifier:
@@ -124,7 +121,8 @@ class LLMSizeExperiment:
         print('Classifying task done.\n')
 
         # 2) for each LLM, do concept‐guess / training / simulation prediction
-        for name, llm_model in llm_models.items():
+        for name in llm_model_names:
+            llm_model = LLMModel(model_name=name)
             print('Running experiment for LLM:', name, '-----------------')
 
             # --- Concept Guess ---
@@ -195,7 +193,7 @@ class LLMSizeExperiment:
                         matched_label = candidate
                         break
                 llm_simulation_predicted_label = matched_label
-                print('sentence: ', i, '/', len(x_test), ' | true label:', y_test[i], ' | classifier label:',
+                print('sentence: ', i+1, '/', len(x_test), ' | true label:', y_test[i], ' | classifier label:',
                       self.classifier_predicted_labels[classifier_name][i],
                       ' | LLM prediction:', llm_simulation_raw_prediction,
                       ' | LLM label:', llm_simulation_predicted_label
@@ -204,17 +202,11 @@ class LLMSizeExperiment:
                 llm_simulation_predicted_labels.append(llm_simulation_predicted_label)
             self.llm_simulation_predicted_labels[name] = llm_simulation_predicted_labels
             self.llm_simulation_raw_predictions[name] = llm_simulation_raw_predictions
-            # self.simulation_correct[name] = [classifier_label.lower() in sim_label.lower()
-            #                                  for sim_label, classifier_label in zip(
-            #         llm_simulation_predicted_labels, classifier_predicted_labels)]
-            # self.direct_correct[name] = [y_test_label.lower() in sim_label.lower()
-            #                                  for sim_label, y_test_label in zip(
-            #         llm_simulation_predicted_labels, y_test)]
             print('Simulation done.\n')
 
         # 4) build model DataFrame
         rows = []
-        for llm_name, _ in llm_models.items():
+        for llm_name in llm_model_names:
             rows.append({
                 'run_id': self.run_number,
                 'dataset_name': dataset_name,
@@ -243,7 +235,7 @@ class LLMSizeExperiment:
         # 5) build predictions DataFrame
         rows = []
         x_test_present_mask = [(i in llm_train_indices) for i in range(len(x_test))]
-        for llm_name, _ in llm_models.items():
+        for llm_name in llm_model_names:
             for i, (x, y,
                  classifier_predicted_label,
                  llm_simulation_predicted_label,
