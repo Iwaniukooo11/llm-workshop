@@ -1,11 +1,26 @@
 ,run_id,dataset_name,classifier,llm,classifier_accuracy,classifier_precision,classifier_recall,classifier_f1,classifier_balanced_accuracy,classifier_cohen_kappa,classifier_mcc,prompt_header_llm_concept,prompt_content_llm_concept,prompt_tail_llm_concept,prompt_header_llm_train,prompt_content_llm_train,prompt_tail_llm_train,prompt_llm_simulation,llm_predicted_concept
-0,1,go_emotions,custom_classifier,gpt-neo-1.3B,0.45,0.17341269841269843,0.2916666666666667,0.20555555555555557,0.3181818181818182,0.367816091954023,0.3909713999991001,"In 2 words I will guess, what the task is.
+0,1,go_emotions,roberta-base-go_emotions,facebook/opt-125m,0.593,0.48366176451522447,0.4842700985169351,0.46995132341396,0.4842700985169351,0.5319843289494716,0.5331733355299653,"In few words I will guess, what the task is.
 ","{x_test} -> {y_test}
-",In 2 words the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word.
+",In the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word from the words listed below.
 ","{x_train} -> {y_train}
-",,{x_test} -> ,How can we get you
-1,2,go_emotions,roberta-base-go_emotions,gpt-neo-1.3B,0.7,0.49999999999999994,0.5358974358974359,0.4863247863247863,0.6333333333333333,0.6629213483146068,0.6762205409722782,"In 2 words I will guess, what the task is.
+",,{x_test} -> ,What's it like being
+1,1,go_emotions,roberta-base-go_emotions,facebook/opt-350m,0.593,0.48366176451522447,0.4842700985169351,0.46995132341396,0.4842700985169351,0.5319843289494716,0.5331733355299653,"In few words I will guess, what the task is.
 ","{x_test} -> {y_test}
-",In 2 words the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word.
+",In the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word from the words listed below.
 ","{x_train} -> {y_train}
-",,{x_test} -> ,1. to find
+",,{x_test} -> ,* ~~
+2,1,go_emotions,roberta-base-go_emotions,facebook/opt-1.3b,0.593,0.48366176451522447,0.4842700985169351,0.46995132341396,0.4842700985169351,0.5319843289494716,0.5331733355299653,"In few words I will guess, what the task is.
+","{x_test} -> {y_test}
+",In the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word from the words listed below.
+","{x_train} -> {y_train}
+",,{x_test} -> ,"""Complete the following tasks"
+3,1,go_emotions,roberta-base-go_emotions,facebook/opt-2.7b,0.593,0.48366176451522447,0.4842700985169351,0.46995132341396,0.4842700985169351,0.5319843289494716,0.5331733355299653,"In few words I will guess, what the task is.
+","{x_test} -> {y_test}
+",In the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word from the words listed below.
+","{x_train} -> {y_train}
+",,{x_test} -> ,"""Use a door that"
+4,1,go_emotions,roberta-base-go_emotions,facebook/opt-6.7b,0.593,0.48366176451522447,0.4842700985169351,0.46995132341396,0.4842700985169351,0.5319843289494716,0.5331733355299653,"In few words I will guess, what the task is.
+","{x_test} -> {y_test}
+",In the task is:,"I am a classificator. I will find sentiment and answer in exactly 1 word from the words listed below.
+","{x_train} -> {y_train}
+",,{x_test} -> ,"""You have to make"
