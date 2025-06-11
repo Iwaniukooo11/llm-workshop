@@ -1,7 +1,10 @@
 from pandas import DataFrame
+
 from core.base_model import BaseModel
 from typing import Dict, List
-from collections import Counter
+from collections import Counter, defaultdict
+from basic.llm_model import LLMModel
+import random
 import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
@@ -31,25 +34,9 @@ class LLMSizeExperiment:
         self.classifier_confidence: Dict[str, List[float]] = {}
         # LLM concept guessing outputs and metrics
         self.llm_predicted_concepts: Dict[str, str] = {}
-        self.llm_concept_accuracy: Dict[str, float] = {}
         # LLM simulation outputs and metrics
         self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
-        self.llm_simulation_accuracy: Dict[str, float] = {}
-        self.llm_simulation_precision: Dict[str, float] = {}
-        self.llm_simulation_recall: Dict[str, float] = {}
-        self.llm_simulation_f1: Dict[str, float] = {}
-        self.llm_simulation_balanced_accuracy: Dict[str, float] = {}
-        self.llm_simulation_cohen_kappa: Dict[str, float] = {}
-        self.llm_simulation_mcc: Dict[str, float] = {}
-        # LLM direct classification outputs and metrics
-        self.llm_direct_predicted_labels: Dict[str, List[str]] = {}
-        self.llm_direct_prediction_accuracy: Dict[str, float] = {}
-        self.llm_direct_precision: Dict[str, float] = {}
-        self.llm_direct_recall: Dict[str, float] = {}
-        self.llm_direct_f1: Dict[str, float] = {}
-        self.llm_direct_balanced_accuracy: Dict[str, float] = {}
-        self.llm_direct_cohen_kappa: Dict[str, float] = {}
-        self.llm_direct_mcc: Dict[str, float] = {}
+        self.llm_simulation_raw_predictions: Dict[str, List[str]] = {}
 
     def run(
             self,
@@ -60,16 +47,20 @@ class LLMSizeExperiment:
             y_test: List[str],
             x_val: List[str],
             y_val: List[str],
+            max_samples_for_llm_train: int,
             dataset_name: str,
             concept: str,
-            concept_keywords: List[str],
+            max_samples_for_concept: int,
+            force_balanced_llm_train: bool,
+            switched_classifier_prediction_labels: Dict[str,str],
 
             classifier_name: str,
             classifier: BaseModel,
             train_classifier: bool,
             classifier_train_arguments: Dict[str, int],
 
-            llm_models: Dict[str, BaseModel],
+            # llm_models: Dict[str, BaseModel],
+            llm_model_names: List[str],
             prompt_header_llm_concept: str,
             prompt_content_llm_concept: str,
             prompt_tail_llm_concept: str,
@@ -82,37 +73,27 @@ class LLMSizeExperiment:
         self.run_number += 1
 
         # 0) clear previous data
-        self.classifier_predicted_labels.clear()
-        self.classifier_accuracy.clear()
-        self.classifier_precision.clear()
-        self.classifier_recall.clear()
-        self.classifier_f1.clear()
-        self.classifier_balanced_accuracy.clear()
-        self.classifier_cohen_kappa.clear()
-        self.classifier_mcc.clear()
-        self.classifier_confidence.clear()
-        self.llm_predicted_concepts.clear()
-        self.llm_concept_accuracy.clear()
-        self.llm_simulation_predicted_labels.clear()
-        self.llm_simulation_accuracy.clear()
-        self.llm_simulation_precision.clear()
-        self.llm_simulation_recall.clear()
-        self.llm_simulation_f1.clear()
-        self.llm_simulation_balanced_accuracy.clear()
-        self.llm_simulation_cohen_kappa.clear()
-        self.llm_simulation_mcc.clear()
-        self.llm_direct_predicted_labels.clear()
-        self.llm_direct_prediction_accuracy.clear()
-        self.llm_direct_precision.clear()
-        self.llm_direct_recall.clear()
-        self.llm_direct_f1.clear()
-        self.llm_direct_balanced_accuracy.clear()
-        self.llm_direct_cohen_kappa.clear()
-        self.llm_direct_mcc.clear()
+        # Classifier outputs
+        self.classifier_predicted_labels: Dict[str, List[str]] = {}
+        self.classifier_accuracy: Dict[str, float] = {}
+        self.classifier_precision: Dict[str, float] = {}
+        self.classifier_recall: Dict[str, float] = {}
+        self.classifier_f1: Dict[str, float] = {}
+        self.classifier_balanced_accuracy: Dict[str, float] = {}
+        self.classifier_cohen_kappa: Dict[str, float] = {}
+        self.classifier_mcc: Dict[str, float] = {}
+        self.classifier_confidence: Dict[str, List[float]] = {}
+        # LLM concept guessing outputs and metrics
+        self.llm_predicted_concepts: Dict[str, str] = {}
+        # LLM simulation outputs and metrics
+        self.llm_simulation_predicted_labels: Dict[str, List[str]] = {}
+        self.llm_simulation_raw_predictions: Dict[str, List[str]] = {}
 
         # 1) classifier prediction
         if train_classifier:
+            print('Training classifier...')
             classifier.train(x_train, y_train, x_val, y_val, **classifier_train_arguments)
+        print('Classifier is predicting sentiments...')
         raw_predictions = [classifier.predict(text) for text in x_test]
         classifier_predicted_labels = [list(d.keys())[0] for d in raw_predictions]
         classifier_predicted_confidences = [list(d.values())[0] for d in raw_predictions]
@@ -137,85 +118,95 @@ class LLMSizeExperiment:
         self.classifier_balanced_accuracy[classifier_name] = cls_bal_acc
         self.classifier_cohen_kappa[classifier_name] = cls_kappa
         self.classifier_mcc[classifier_name] = cls_mcc
+        print('Classifying task done.\n')
 
         # 2) for each LLM, do concept‐guess / training / simulation prediction
-        for name, llm_model in llm_models.items():
-            print('Running experiment for LLM:', name)
+        for name in llm_model_names:
+            llm_model = LLMModel(model_name=name)
+            print('Running experiment for LLM:', name, '-----------------')
 
             # --- Concept Guess ---
-            prompt_content = ""
-            for x, y in zip(x_test, y_test):
-                prompt_content += prompt_content_llm_concept.format(x_test=x, y_test=y)
-            prompt = prompt_header_llm_concept + prompt_content + prompt_tail_llm_concept
-            llm_concept_prediction = llm_model.predict_concept(prompt)
+            print('LLM guessing context...', end='')
+            llm_model.prompt_header_llm_concept = prompt_header_llm_concept
+            llm_model.prompt_content_llm_concept = prompt_content_llm_concept
+            llm_model.prompt_tail_llm_concept = prompt_tail_llm_concept
+            llm_concept_prediction = llm_model.predict_concept(x_test[:max_samples_for_concept], classifier_predicted_labels[:max_samples_for_concept])
             self.llm_predicted_concepts[name] = llm_concept_prediction
-            self.llm_concept_accuracy[name] = float(concept.lower() in llm_concept_prediction.lower()
-                                                    or any(kw.lower() in llm_concept_prediction.lower()
-                                                           for kw in concept_keywords))
+            print('guessed: ', llm_concept_prediction)
 
+            # --- LLM train sampling ---
+            n = max_samples_for_llm_train
+            labels = classifier_predicted_labels
+            if force_balanced_llm_train:
+                label_to_indices = defaultdict(list)
+                for idx, lbl in enumerate(labels):
+                    label_to_indices[lbl].append(idx)
+                unique_labels = list(label_to_indices.keys())
+                num_labels = len(unique_labels)
+                base = n // num_labels
+                remainder = n % num_labels
+                llm_train_indices = []
+                for i, lbl in enumerate(unique_labels):
+                    candidates = label_to_indices[lbl]
+                    import random
+                    random.shuffle(candidates)
+                    take = base + (1 if i < remainder else 0)
+                    chosen = candidates[:min(take, len(candidates))]
+                    llm_train_indices.extend(chosen)
+                if len(llm_train_indices) < n:
+                    all_indices = set(range(len(x_test)))
+                    already = set(llm_train_indices)
+                    remaining = list(all_indices - already)
+                    random.shuffle(remaining)
+                    need = n - len(llm_train_indices)
+                    llm_train_indices.extend(remaining[:need])
+                llm_train_indices = sorted(llm_train_indices)
+                x_llm_train = [x_test[i] for i in llm_train_indices]
+                y_llm_train = [labels[i] for i in llm_train_indices]
+            else:
+                llm_train_indices = list(range(min(n, len(x_test))))
+                x_llm_train = [x_test[i] for i in llm_train_indices]
+                y_llm_train = [labels[i] for i in llm_train_indices]
             # --- Training ---
-            # prompt_content = ""
-            # for x, y in zip(x_train, y_train):
-            #     prompt_content += prompt_content_llm_train.format(x_train=x, y_train=y)
-            # prompt = prompt_header_llm_train + prompt_content + prompt_tail_llm_train
-            # llm_model.train(train_loader=None, x_train=x_train, y_train=y_train, prompt=prompt)
+            print("Training LLM based on classifier's inputs and outputs...")
+            llm_model.prompt_header_llm_train = prompt_header_llm_train
+            llm_model.prompt_header_llm_train = prompt_content_llm_train
+            llm_model.prompt_header_llm_train = prompt_tail_llm_train
+            llm_model.train(x_llm_train, y_llm_train)
 
             # --- Simulation ---
+            print("LLM simulating classifier...")
+            all_labels = []
+            for lbl in (y_train + y_val + y_test):
+                lower = lbl.lower()
+                if lower not in all_labels:
+                    all_labels.append(lower)
+            llm_simulation_raw_predictions: List[str] = []
             llm_simulation_predicted_labels: List[str] = []
-            for x in x_test:
-                prompt = prompt_llm_simulation.format(x_test=x)
-                llm_simulation_predicted_label = llm_model.predict(prompt)
+            llm_model.prompt_llm_simulation = prompt_llm_simulation
+            for i, x in enumerate(x_test):
+                llm_simulation_raw_prediction = llm_model.predict(x)
+                raw_lower = llm_simulation_raw_prediction.lower()
+                matched_label = "No label"
+                for candidate in all_labels:
+                    if candidate in raw_lower:
+                        matched_label = candidate
+                        break
+                llm_simulation_predicted_label = matched_label
+                print('sentence: ', i+1, '/', len(x_test), ' | true label:', y_test[i], ' | classifier label:',
+                      self.classifier_predicted_labels[classifier_name][i],
+                      ' | LLM prediction:', llm_simulation_raw_prediction,
+                      ' | LLM label:', llm_simulation_predicted_label
+                      )
+                llm_simulation_raw_predictions.append(llm_simulation_raw_prediction)
                 llm_simulation_predicted_labels.append(llm_simulation_predicted_label)
             self.llm_simulation_predicted_labels[name] = llm_simulation_predicted_labels
-            self.llm_simulation_accuracy[name] = sum(simulation_label == classifier_label
-                                                     for simulation_label, classifier_label in zip(llm_simulation_predicted_labels,
-                                                     classifier_predicted_labels)) / len(llm_simulation_predicted_labels)
-            self.llm_direct_prediction_accuracy[name] = sum(simulation_label == true_label
-                                                     for simulation_label, true_label in zip(llm_simulation_predicted_labels,
-                                                    y_test)) / len(llm_simulation_predicted_labels)
-
-            # 1) Simulation vs. Classifier metrics
-            sim_preds = llm_simulation_predicted_labels
-            sim_acc = accuracy_score(classifier_predicted_labels, sim_preds)
-            sim_prec = precision_score(classifier_predicted_labels, sim_preds, average="macro", zero_division=0)
-            sim_rec = recall_score(classifier_predicted_labels, sim_preds, average="macro", zero_division=0)
-            sim_f1 = f1_score(classifier_predicted_labels, sim_preds, average="macro", zero_division=0)
-            sim_bal_acc = balanced_accuracy_score(classifier_predicted_labels, sim_preds)
-            sim_kappa = cohen_kappa_score(classifier_predicted_labels, sim_preds)
-            try:
-                sim_mcc = matthews_corrcoef(classifier_predicted_labels, sim_preds)
-            except Exception:
-                sim_mcc = 0.0
-            self.llm_simulation_accuracy[name] = sim_acc
-            self.llm_simulation_precision[name] = sim_prec
-            self.llm_simulation_recall[name] = sim_rec
-            self.llm_simulation_f1[name] = sim_f1
-            self.llm_simulation_balanced_accuracy[name] = sim_bal_acc
-            self.llm_simulation_cohen_kappa[name] = sim_kappa
-            self.llm_simulation_mcc[name] = sim_mcc
-            # 2) Simulation vs. true labels
-            direct_preds = llm_simulation_predicted_labels
-            direct_acc = accuracy_score(y_test, direct_preds)
-            direct_prec = precision_score(y_test, direct_preds, average="macro", zero_division=0)
-            direct_rec = recall_score(y_test, direct_preds, average="macro", zero_division=0)
-            direct_f1 = f1_score(y_test, direct_preds, average="macro", zero_division=0)
-            direct_bal_acc = balanced_accuracy_score(y_test, direct_preds)
-            direct_kappa = cohen_kappa_score(y_test, direct_preds)
-            try:
-                direct_mcc = matthews_corrcoef(y_test, direct_preds)
-            except Exception:
-                direct_mcc = 0.0
-            self.llm_direct_prediction_accuracy[name] = direct_acc
-            self.llm_direct_precision[name] = direct_prec
-            self.llm_direct_recall[name] = direct_rec
-            self.llm_direct_f1[name] = direct_f1
-            self.llm_direct_balanced_accuracy[name] = direct_bal_acc
-            self.llm_direct_cohen_kappa[name] = direct_kappa
-            self.llm_direct_mcc[name] = direct_mcc
+            self.llm_simulation_raw_predictions[name] = llm_simulation_raw_predictions
+            print('Simulation done.\n')
 
         # 4) build model DataFrame
         rows = []
-        for llm_name, _ in llm_models.items():
+        for llm_name in llm_model_names:
             rows.append({
                 'run_id': self.run_number,
                 'dataset_name': dataset_name,
@@ -229,24 +220,6 @@ class LLMSizeExperiment:
                 'classifier_balanced_accuracy': self.classifier_balanced_accuracy[classifier_name],
                 'classifier_cohen_kappa': self.classifier_cohen_kappa[classifier_name],
                 'classifier_mcc': self.classifier_mcc[classifier_name],
-                # LLM concept accuracy (exact match / keyword)
-                'llm_concept_accuracy': self.llm_concept_accuracy.get(llm_name, 0.0),
-                # LLM simulation metrics
-                'llm_simulation_accuracy': self.llm_simulation_accuracy.get(llm_name, 0.0),
-                'llm_simulation_precision': self.llm_simulation_precision.get(llm_name, 0.0),
-                'llm_simulation_recall': self.llm_simulation_recall.get(llm_name, 0.0),
-                'llm_simulation_f1': self.llm_simulation_f1.get(llm_name, 0.0),
-                'llm_simulation_balanced_accuracy': self.llm_simulation_balanced_accuracy.get(llm_name, 0.0),
-                'llm_simulation_cohen_kappa': self.llm_simulation_cohen_kappa.get(llm_name, 0.0),
-                'llm_simulation_mcc': self.llm_simulation_mcc.get(llm_name, 0.0),
-                # LLM direct metrics
-                'llm_direct_prediction_accuracy': self.llm_direct_prediction_accuracy.get(llm_name, 0.0),
-                'llm_direct_precision': self.llm_direct_precision.get(llm_name, 0.0),
-                'llm_direct_recall': self.llm_direct_recall.get(llm_name, 0.0),
-                'llm_direct_f1': self.llm_direct_f1.get(llm_name, 0.0),
-                'llm_direct_balanced_accuracy': self.llm_direct_balanced_accuracy.get(llm_name, 0.0),
-                'llm_direct_cohen_kappa': self.llm_direct_cohen_kappa.get(llm_name, 0.0),
-                'llm_direct_mcc': self.llm_direct_mcc.get(llm_name, 0.0),
                 # Prompts
                 'prompt_header_llm_concept': prompt_header_llm_concept,
                 'prompt_content_llm_concept': prompt_content_llm_concept,
@@ -261,14 +234,21 @@ class LLMSizeExperiment:
 
         # 5) build predictions DataFrame
         rows = []
-        for llm_name, _ in llm_models.items():
-            for (x, y,
+        x_test_present_mask = [(i in llm_train_indices) for i in range(len(x_test))]
+        for llm_name in llm_model_names:
+            for i, (x, y,
                  classifier_predicted_label,
                  llm_simulation_predicted_label,
-                 classifier_predicted_label_confidence) in zip(x_test, y_test,
+                 llm_simulation_raw_prediction,
+                 classifier_predicted_label_confidence) in enumerate(zip(x_test, y_test,
                                                         self.classifier_predicted_labels[classifier_name],
                                                         self.llm_simulation_predicted_labels[llm_name],
-                                                        self.classifier_confidence[classifier_name]):
+                                                        self.llm_simulation_raw_predictions[llm_name],
+                                                        self.classifier_confidence[classifier_name])):
+                switched_label = switched_classifier_prediction_labels.get(
+                    classifier_predicted_label,
+                    classifier_predicted_label
+                )
                 rows.append({
                     'run_id': self.run_number,
                     'dataset_name': dataset_name,
@@ -277,8 +257,16 @@ class LLMSizeExperiment:
                     'x_test': x,
                     'y_test': y,
                     'classifier_predicted_label': classifier_predicted_label,
+                    'classifier_predicted_label_after_switch': switched_label,
+                    'llm_simulation_predicted_label': llm_simulation_predicted_label,
+                    'llm_simulation_raw_prediction': llm_simulation_raw_prediction,
                     'classifier_predicted_label_confidence': classifier_predicted_label_confidence,
-                    'llm_simulation_predicted_label': llm_simulation_predicted_label
+                    'x_test_present_in_train_prompt': x_test_present_mask[i],
+                    'classifier_predicted_label_correct': classifier_predicted_label==y,
+                    'llm_simulation_label_correct': llm_simulation_predicted_label==classifier_predicted_label,
+                    'llm_direct_label_correct': llm_simulation_predicted_label==y,
+                    'llm_simulation_label_correct_after_switch': llm_simulation_predicted_label==switched_label
+
                 })
         prediction_statistics = pd.DataFrame(rows)
 
@@ -293,8 +281,10 @@ class LLMSizeExperiment:
             rows.append({
                 'run_id': self.run_number,
                 'dataset_name': dataset_name,
+                'concept': concept,
                 'classifier_name': classifier_name,
                 'partition': name_data,
+                'is_llm_train_balanced': force_balanced_llm_train,
                 'num_samples': len(x_data),
                 'label_counts': str(dict(counts)),
                 'label_proportions': str({k: round(v, 2) for k, v in train_props.items()}),
